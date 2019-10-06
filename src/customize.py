@@ -27,13 +27,21 @@ class customize(Callback):
         for metric in self.metrics:
             self.group1.create_group(metric)
             self.group2.create_group(metric)
+        self.file.close()
 
     def on_epoch_end(self,epoch,logs={}):
+        moment = self.moment
+        self.file = h5.File('{}/{}-{}-{}-{}-{}-{}-start-train-logs.hdf5'.format(self.savedir,
+                    moment[0],moment[1],moment[2],moment[3],moment[4],moment[5]),'r+')
+        self.group1 = self.file['train']
+        self.group2 = self.file['valid']
         for metric in self.metrics:
+            print('创建{}-{}-dataset来存储训练中间数据'.format(metric,epoch+1))
             self.dice[metric].append(logs.get(metric))
             self.val_dice[metric].append(logs.get('val_' + metric))
             self.group1[metric].create_dataset('{}-epoch'.format(epoch+1),data=self.dice[metric])
             self.group2[metric].create_dataset('{}-epoch'.format(epoch+1),data=self.val_dice[metric])
+        self.file.close()
     
     def on_train_end(self,logs=None):
         self.file.close()

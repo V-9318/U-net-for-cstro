@@ -60,7 +60,7 @@ metrics = [
 
 
 m = method[key](n_classes, input_height=input_height, input_width=input_width)
-m.load_weights('../build/checkpoints/unet_OAR_model_1_128_128.hdf5')
+m.load_weights('../build/checkpoints/unet-OAR-128-128-04-0.948708-0.940306-0.968347-0.908442-0.621639-0.780592-0.864967.hdf5')
 m.compile(loss='categorical_crossentropy',
           optimizer=Adam(lr=1.0e-3),
           metrics=metrics)
@@ -110,7 +110,8 @@ callbacks = [
 hist = m.fit_generator(
     img.flow(X_train, y_train, batch_size=batch_size),
     validation_data=(X_valid, y_valid),
-    steps_per_epoch=len(X_train) // batch_size,
+    steps_per_epoch=None,
+    shuffle=True,
     epochs=epochs,
     validation_steps=100,
     callbacks=callbacks,

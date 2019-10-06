@@ -1,0 +1,18 @@
+# data dirs
+/data/
+/testdata/
+/testresult/
+
+# cache dirs
+/__pycache__/
+model/__pycache__/
+
+
+# Log dirs
+/Log/
+
+# weights data
+/checkpoints/
+
+# test.py
+ostest.py

@@ -44,11 +44,11 @@ dice_5 = util.dice(label_[:,:,:,5],out_[:,:,:,5])
 dice_6 = util.dice(label_[:,:,:,6],out_[:,:,:,6])
 
 m = method[key](n_classes, input_height, input_width)  # 有自定义层时，不能直接加载模型
-m.load_weights('checkpoints/{}'.format(modelrecordname))
+m.load_weights('../build/checkpoints/{}'.format(modelrecordname))
 
 # testdata_path直接放入病人数据文件夹,自行放入
-testdata_path = './testdata'
-testresult_path = './testresult'
+testdata_path = '../build/testdata'
+testresult_path = '../build/testresult'
 for name in os.listdir(testdata_path):
     if not os.path.exists(testresult_path):
         os.mkdir(testresult_path)

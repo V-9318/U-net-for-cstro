@@ -16,7 +16,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 # 在这里填写需要加载的模型hdf5文件名字，并确保其被放在checkpoints主目录下
-modelrecordname = 'unet-OAR-128-128-11-0.964433-0.956794-0.978773-0.925693-0.735412-0.837346-0.904324.hdf5'
+modelrecordname = util.get_new('../build/checkpoints')
 
 # 与训练的参数一致
 n_classes = 7

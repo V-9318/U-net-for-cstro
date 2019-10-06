@@ -7,6 +7,7 @@ import LoadData
 
 from customize import customize
 from model import unet
+from keras.utils import to_categorical
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
 from sklearn.model_selection import train_test_split
@@ -60,7 +61,7 @@ metrics = [
 
 
 m = method[key](n_classes, input_height=input_height, input_width=input_width)
-m.load_weights('../build/checkpoints/unet-OAR-128-128-04-0.948708-0.940306-0.968347-0.908442-0.621639-0.780592-0.864967.hdf5')
+m.load_weights(util.get_new('../build/checkpoints'))
 m.compile(loss='categorical_crossentropy',
           optimizer=Adam(lr=1.0e-3),
           metrics=metrics)
@@ -98,7 +99,7 @@ callbacks = [
                       min_delta=0.005, cooldown=1, verbose=1, min_lr=1e-10),
     EarlyStopping(monitor='val_loss', min_delta=0.0001, mode='min',
                   verbose=1, patience=5),
-    ModelCheckpoint(filepath='../build/checkpoints/%s-%s-%s-%s-{epoch:02d}-{global_dice:05f}-{dice1:05f}-{dice2:05f}-{dice3:05f}-{dice4:05f}-{dice5:05f}-{dice6:05f}.hdf5'%(key, target, input_height,input_width),
+    ModelCheckpoint(filepath='../build/checkpoints/%s-%s-%s-%s-{epoch:03d}-{val_global_dice:05f}-{val_dice1:05f}-{val_dice2:05f}-{val_dice3:05f}-{val_dice4:05f}-{val_dice5:05f}-{val_dice6:05f}.hdf5'%(key, target, input_height,input_width),
                     verbose=True,
                     save_best_only=True,
                     monitor='val_loss',
@@ -106,6 +107,7 @@ callbacks = [
     # 自定义回调函数，保存训练日志，并做一些处理
     customize('../build/Log')
 ]
+
 
 hist = m.fit_generator(
     img.flow(X_train, y_train, batch_size=batch_size),

@@ -1,9 +1,18 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import cv2
+import os 
+import time
 import numpy as np
 import tensorflow as tf
 from keras import backend as K
 
+def get_new(dir):
+    # 获得某个目录下创建时间最晚的文件，最新的文件
+    map = lambda x:os.path.getctime(os.path.join(dir,x))
+    file_list = os.listdir(dir)
+    new = sorted(file_list,key=map,reverse=True)[0]
+    return new,time.localtime(map(new))
 
 def dice(y_pre,y_true,smooth=1):
     pre_num = tf.reduce_sum(y_pre)
@@ -67,13 +76,13 @@ def dice_(y_true,y_pred,smooth=1):
 def softmax_norm(y_pred):
     # 输出的是softmax之后的概率值从而导致结果不纯净，所以需要进行处理
     temp1 = tf.argmax(y_pred,axis=-1)
-    y_pred_norm = tf.one_hot(temp1,7,1,0)
+    y_pred_norm = tf.one_hot(temp1,y_pred.shape[-1].value,1,0)
     y_pred_norm = tf.cast(y_pred_norm,dtype=tf.float32)
     return y_pred_norm
 
 def global_dice(y_true,y_pred):
     y_pred_norm = softmax_norm(y_pred)
-    return dice_(y_true[:,:,:,1:7],y_pred_norm[:,:,:,1:7])
+    return dice_(y_true[:,:,:,1:],y_pred_norm[:,:,:,1:])
 
 def dice1(y_true, y_pred):
     y_pred_norm = softmax_norm(y_pred)

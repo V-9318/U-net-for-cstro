@@ -18,6 +18,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 path = '../build/data/Thoracic_OAR'
+weights_path = '../build/checkpoints'
 
 n_classes = 7
 input_height = 128
@@ -61,7 +62,7 @@ metrics = [
 
 
 m = method[key](n_classes, input_height=input_height, input_width=input_width)
-m.load_weights(util.get_new('../build/checkpoints'))
+m.load_weights(os.path.join(weights_path,util.get_new('../build/checkpoints')[0]))
 m.compile(loss='categorical_crossentropy',
           optimizer=Adam(lr=1.0e-3),
           metrics=metrics)

@@ -16,14 +16,14 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 # 在这里填写需要加载的模型hdf5文件名字，并确保其被放在checkpoints主目录下
-modelrecordname = 'unet-OAR-128-128-01-0.941320-0.933573-0.961158-0.902565-0.568022-0.753636-0.849562.hdf5'
+modelrecordname = 'unet-OAR-128-128-11-0.964433-0.956794-0.978773-0.925693-0.735412-0.837346-0.904324.hdf5'
 
 # 与训练的参数一致
 n_classes = 7
 input_height = 128
 input_width = 128
 key = "unet"
-name = "OAR"
+flag = "OAR"
 
 method = {
     'unet': unet.UNet,

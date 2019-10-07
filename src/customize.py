@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+import time
+import os
+import h5py as h5
+import util
+from keras.callbacks import Callback
+
+
+
 class customize(Callback):
     # 自定义的keras回调
     def __init__(self,savedir,metrics,initial_epoch,target):

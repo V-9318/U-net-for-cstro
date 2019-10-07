@@ -22,7 +22,7 @@ n_classes = 2
 input_height = 128
 input_width = 128
 key = "unet"
-target = "OAR4"
+target = "GTV"
 
 method = {
     'unet': unet.UNet,
@@ -46,7 +46,7 @@ m = method[key](n_classes, input_height, input_width)  # 有自定义层时，�
 m.load_weights('../build/checkpoints/{}/{}'.format(target,modelrecordname))
 
 # testdata_path直接放入病人数据文件夹,自行放入
-testdata_path = '../build/testdata'
+testdata_path = '../build/testdata_GTV'
 testresult_path = '../build/testresult'
 y_list = []
 x_list = []

@@ -17,22 +17,38 @@ from keras.preprocessing.image import ImageDataGenerator
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-path = '../build/data/Thoracic_OAR'
+path = '../build/data/lung_GTV'
 weights_path = '../build/checkpoints'
 Log_path        = '../build/Log'
 
-n_classes = 7
+n_classes = 2
 input_height = 128
 input_width = 128
 batch_size = 12
 max_epochs = 1000
 key = "unet"
-target = "OAR4"
+target = "GTV"
 target_classes = 2
 
 method = {
     'unet': unet.UNet,
 }
+
+# 假设为空文件吧
+if not os.path.exists('../build'):
+    os.mkdir('../build')
+
+if not os.path.exists('../build/checkpoints'):
+    os.mkdir('../build/checkpoints')
+
+if not os.path.exists('../build/checkpoints/' + target):
+    os.mkdir('../build/checkpoints/' + target)
+
+if not os.path.exists('../build/Log'):
+    os.mkdir('../build/Log')
+
+if not os.path.exists('../build/Log/' + target):
+    os.mkdir('../build/Log/' + target)
 
 # 给出加载数据时间，其实没有太多意义
 
@@ -57,12 +73,9 @@ metrics  = []
 for item in eva_list:
     metrics.append(getattr(util,item))
 
-
-y_train = to_categorical(y_train[:,:,:,4],target_classes)
-y_valid = to_categorical(y_valid[:,:,:,4],target_classes)
-
+# GTV只有两类点，一种是不属于GTV和属于GTV两种点
 epoch_begin = 0
-m = method[key](2, input_height=input_height, input_width=input_width)
+m = method[key](target_classes, input_height=input_height, input_width=input_width)
 if(len(os.listdir('../build/checkpoints/{}'.format(target))) != 0):
     m.load_weights(os.path.join('../build/checkpoints/{}'.format(target),util.get_new('../build/checkpoints/{}'.format(target))[0]))
     epoch_begin = int(util.get_new('../build/checkpoints/{}'.format(target))[0].split('-')[3])
@@ -93,21 +106,6 @@ img = ImageDataGenerator(
     data_format="channels_last")
 # 数据形式为通道最后
 
-# 假设为空文件吧
-if not os.path.exists('../build'):
-    os.mkdir('../build')
-
-if not os.path.exists('../build/checkpoints'):
-    os.mkdir('../build/checkpoints')
-
-if not os.path.exists('../build/checkpoints/' + target):
-    os.mkdir('../build/checkpoints/' + target)
-
-if not os.path.exists('../build/Log'):
-    os.mkdir('../build/Log')
-
-if not os.path.exists('../build/Log/' + target):
-    os.mkdir('../build/Log/' + target)
 
 callbacks = [
     ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, mode='min',

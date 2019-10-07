@@ -47,7 +47,8 @@ nps = []
 
 for name in os.listdir(testresult_path):
     if(os.path.splitext(name)[1] == '.npy'):
-        nps.append(np.load(os.path.join(testresult_path,name)))
+        if '_{}.'.format(target) in name:
+            nps.append(np.load(os.path.join(testresult_path,name)))
 
 global_dice = 0
 dice1 = 0

@@ -29,9 +29,24 @@ else:
         for j in temp:
             print('|-------------\n|-----%s'%(j))
             for k in f[i][j].keys():
-                print('|---{}:{}'.format(k,f[i][j][k].value))
+                print('|---{}:{}'.format(k,f[i][j][k][()]))
 
+nps = []
 
+for name in os.listdir(testresult_path):
+    if(os.path.splitext(name)[1] == '.npy'):
+        if '_{}.'.format(target) in name:
+            nps.append(np.load(os.path.join(testresult_path,name)))
+
+global_dice = 0
+
+for one_np in nps:
+    global_dice += one_np[0]/len(nps)
+
+print('---------------------------------------')
+print('|---test')
+print("|---(全局:{})".format(global_dice))
+print('======================================================')
 
 # 获得权重的时间排序
 new_weights_filename,moment = util.get_new('{}/{}'.format(weights_path,target))

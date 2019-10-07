@@ -27,7 +27,7 @@ input_width = 128
 batch_size = 12
 max_epochs = 1000
 key = "unet"
-target = "OAR4"
+target = "OAR"
 target_classes = 7
 
 method = {
@@ -112,7 +112,7 @@ callbacks = [
                       min_delta=0.005, cooldown=1, verbose=1, min_lr=1e-10),
     EarlyStopping(monitor='val_global_dice', min_delta=0.001, mode='max',
                   verbose=1, patience=5),
-    ModelCheckpoint(filepath='../build/checkpoints/%s/%s-%s-%s-{epoch:03d}-{val_global_dice:05f}.hdf5'%(target, key, input_height,input_width),
+    ModelCheckpoint(filepath='../build/checkpoints/%s/%s-%s-%s-{epoch:03d}-{val_global_dice:05f}-{val_dice1:05f}-{val_dice2:05f}-{val_dice3:05f}-{val_dice4:05f}-{val_dice5:05f}-{val_dice6:05f}.hdf5'%(target, key, input_height,input_width),
                     verbose=True,
                     save_best_only=True,
                     monitor='val_global_dice',

@@ -14,13 +14,9 @@ def get_new(dir):
     new = sorted(file_list,key=map,reverse=True)[0]
     return new,time.localtime(map(new))
 
-def dice(y_pre,y_true,smooth=1):
-    pre_num = tf.reduce_sum(y_pre)
-    tru_num = tf.reduce_sum(y_true)
-    cross_area = y_pre*y_true
-    cro_num = tf.reduce_sum(cross_area)
-    cro_    = (2*cro_num+smooth)/(pre_num + tru_num + smooth)
-    return cro_
+def generator_(data_block):
+    for i in data_block:
+        yield i
 
 def resize_all(mat,n,input_height,input_width):
     mat_ = []

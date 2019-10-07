@@ -15,30 +15,34 @@ from keras import backend as k
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
-# 在这里填写需要加载的模型hdf5文件名字，并确保其被放在checkpoints主目录下
-modelrecordname = util.get_new('../build/checkpoints')[0]
+
 
 # 与训练的参数一致
-n_classes = 7
+n_classes = 2
 input_height = 128
 input_width = 128
 key = "unet"
-flag = "OAR"
+target = "OAR4"
 
 method = {
     'unet': unet.UNet,
 }
 
+# 在这里填写需要加载的模型hdf5文件名字，并确保其被放在checkpoints主目录下
+modelrecordname = util.get_new('../build/checkpoints')[0]
+
 x_feed = tf.placeholder(tf.uint8,shape=[None,512,512])
 y_feed = tf.placeholder(tf.uint8,shape=[None,512,512])
 
-label_ = tf.one_hot(x_feed,n_classes,1,0)
+label_  = tf.one_hot(x_feed,n_classes,1,0)
 out_    = tf.one_hot(y_feed,n_classes,1,0)
+label_  = tf.cast(label_,dtype=tf.float32)
+out_    = tf.cast(out_,dtype=tf.float32)
 
-global_dice = util.dice(label_[:,:,:,1:],out_[:,:,:,1:])
+global_dice = util.global_dice(label_,out_)
 
 m = method[key](n_classes, input_height, input_width)  # 有自定义层时，不能直接加载模型
-m.load_weights('../build/checkpoints/{}'.format(modelrecordname))
+m.load_weights('../build/checkpoints/{}/{}'.format(target,modelrecordname))
 
 # testdata_path直接放入病人数据文件夹,自行放入
 testdata_path = '../build/testdata'

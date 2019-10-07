@@ -25,7 +25,7 @@ n_classes = 7
 input_height = 128
 input_width = 128
 batch_size = 12
-epochs = 1000
+max_epochs = 1000
 key = "unet"
 target = "OAR4"
 target_classes = 2
@@ -61,9 +61,12 @@ for item in eva_list:
 y_train = to_categorical(y_train[:,:,:,4],target_classes)
 y_valid = to_categorical(y_valid[:,:,:,4],target_classes)
 
+epoch_begin = 0
 m = method[key](2, input_height=input_height, input_width=input_width)
-if(len(os.listdir('../build/checkpoints/{}'.format(target))) != 0)
-    m.load_weights(os.path.join(weights_path,util.get_new('../build/checkpoints/{}'.format(target))[0]))
+if(len(os.listdir('../build/checkpoints/{}'.format(target))) != 0):
+    m.load_weights(os.path.join('../build/checkpoints/{}'.format(target),util.get_new('../build/checkpoints/{}'.format(target))[0]))
+    epoch_begin = int(util.get_new('../build/checkpoints/{}'.format(target))[0].split('-')[3])
+
 
 m.compile(loss='categorical_crossentropy',
           optimizer=Adam(lr=1.0e-3),
@@ -117,7 +120,7 @@ callbacks = [
                     monitor='val_global_dice',
                     mode='max'),
     # 自定义回调函数，保存训练日志，并做一些处理
-    customize('../build/Log/{}'.format(target),metrics=eva_list)
+    customize('../build/Log/{}'.format(target),metrics=eva_list,initial_epoch=epoch_begin)
 ]
 
 
@@ -125,9 +128,9 @@ hist = m.fit_generator(
     img.flow(X_train, y_train, batch_size=batch_size),
     validation_data=(X_valid, y_valid),
     steps_per_epoch=None,
-    shuffle=True,
-    epochs=epochs,
+    shuffle=True,               # 打乱训练数据
+    epochs=max_epochs,
     validation_steps=100,
     callbacks=callbacks,
-    # initial_epoch=
+    initial_epoch=epoch_begin
 )

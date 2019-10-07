@@ -11,7 +11,7 @@ import numpy as np
 toint = lambda x:int(x.split('-')[0])
 
 
-target          = 'OAR'
+target          = 'OAR4'
 testresult_path = '../build/testresult'
 Log_path        = '../build/Log'
 weights_path    = '../build/checkpoints'

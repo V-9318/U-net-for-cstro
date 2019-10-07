@@ -123,10 +123,10 @@ for i in range(len(indices)-1):
     savedImg.SetOrigin(origin)
     savedImg.SetDirection(direction)
     savedImg.SetSpacing(space)
-    stk.WriteImage(savedImg,'{}/{}_test_label.nii.gz'.format(testresult_path,name))
+    stk.WriteImage(savedImg,'{}/{}_{}_test_label.nii.gz'.format(testresult_path,name,target))
     
     result = sess.run([global_dice],feed_dict={x_feed:y_list[i],y_feed:out})
-    np.save('{}/{}.npy'.format(testresult_path,name),result)
+    np.save('{}/{}_{}.npy'.format(testresult_path,name,target),result)
     print(result)
 
 sess.close()

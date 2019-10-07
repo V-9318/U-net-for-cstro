@@ -10,8 +10,6 @@ import numpy as np
 # 提取字符串类似于'1-epoch'前面的字符并转成数字
 toint = lambda x:int(x.split('-')[0])
 
-metrics_lists = {'global_dice':'全局','dice1':'左肺','dice2':'右肺','dice3':'心脏','dice4':'食道',
-                 'dice5':'气管','dice6':'脊髓'}
 
 target          = 'OAR'
 testresult_path = '../build/testresult'

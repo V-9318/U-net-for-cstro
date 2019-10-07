@@ -19,14 +19,16 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 path = '../build/data/Thoracic_OAR'
 weights_path = '../build/checkpoints'
+Log_path        = '../build/Log'
 
 n_classes = 7
 input_height = 128
 input_width = 128
 batch_size = 12
-epochs = 1000
+max_epochs = 1000
 key = "unet"
-target = "OAR"
+target = "OAR4"
+target_classes = 7
 
 method = {
     'unet': unet.UNet,
@@ -49,20 +51,21 @@ print('y_valid.shape: {}'.format(y_valid.shape))
 
 print("加载时间:%.2f"%(end-start))
 
-metrics = [
-    util.global_dice,
-    util.dice1,
-    util.dice2,
-    util.dice3,
-    util.dice4,
-    util.dice5,
-    util.dice6
-]
+eva_list = ['global_dice','dice1','dice2','dice3','dice4','dice5','dice6']
+metrics  = []
+
+for item in eva_list:
+    metrics.append(getattr(util,item))
 
 
 
-m = method[key](n_classes, input_height=input_height, input_width=input_width)
-m.load_weights(os.path.join(weights_path,util.get_new('../build/checkpoints')[0]))
+epoch_begin = 0
+m = method[key](target_classes, input_height=input_height, input_width=input_width)
+if(len(os.listdir('../build/checkpoints/{}'.format(target))) != 0):
+    m.load_weights(os.path.join('../build/checkpoints/{}'.format(target),util.get_new('../build/checkpoints/{}'.format(target))[0]))
+    epoch_begin = int(util.get_new('../build/checkpoints/{}'.format(target))[0].split('-')[3])
+
+
 m.compile(loss='categorical_crossentropy',
           optimizer=Adam(lr=1.0e-3),
           metrics=metrics)
@@ -95,18 +98,27 @@ if not os.path.exists('../build'):
 if not os.path.exists('../build/checkpoints'):
     os.mkdir('../build/checkpoints')
 
+if not os.path.exists('../build/checkpoints/' + target):
+    os.mkdir('../build/checkpoints/' + target)
+
+if not os.path.exists('../build/Log'):
+    os.mkdir('../build/Log')
+
+if not os.path.exists('../build/Log/' + target):
+    os.mkdir('../build/Log/' + target)
+
 callbacks = [
     ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, mode='min',
                       min_delta=0.005, cooldown=1, verbose=1, min_lr=1e-10),
-    EarlyStopping(monitor='val_loss', min_delta=0.0001, mode='min',
+    EarlyStopping(monitor='val_global_dice', min_delta=0.001, mode='max',
                   verbose=1, patience=5),
-    ModelCheckpoint(filepath='../build/checkpoints/%s-%s-%s-%s-{epoch:03d}-{val_global_dice:05f}-{val_dice1:05f}-{val_dice2:05f}-{val_dice3:05f}-{val_dice4:05f}-{val_dice5:05f}-{val_dice6:05f}.hdf5'%(key, target, input_height,input_width),
+    ModelCheckpoint(filepath='../build/checkpoints/%s/%s-%s-%s-{epoch:03d}-{val_global_dice:05f}.hdf5'%(target, key, input_height,input_width),
                     verbose=True,
                     save_best_only=True,
-                    monitor='val_loss',
-                    mode='min'),
+                    monitor='val_global_dice',
+                    mode='max'),
     # 自定义回调函数，保存训练日志，并做一些处理
-    customize('../build/Log')
+    customize('../build/Log/{}'.format(target),metrics=eva_list,initial_epoch=epoch_begin,target=target)
 ]
 
 
@@ -114,9 +126,9 @@ hist = m.fit_generator(
     img.flow(X_train, y_train, batch_size=batch_size),
     validation_data=(X_valid, y_valid),
     steps_per_epoch=None,
-    shuffle=True,
-    epochs=epochs,
+    shuffle=True,               # 打乱训练数据
+    epochs=max_epochs,
     validation_steps=100,
     callbacks=callbacks,
-    # initial_epoch=
+    initial_epoch=epoch_begin
 )

@@ -16,7 +16,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 # 在这里填写需要加载的模型hdf5文件名字，并确保其被放在checkpoints主目录下
-modelrecordname = util.get_new('../build/checkpoints')
+modelrecordname = util.get_new('../build/checkpoints')[0]
 
 # 与训练的参数一致
 n_classes = 7
@@ -32,16 +32,10 @@ method = {
 x_feed = tf.placeholder(tf.uint8,shape=[None,512,512])
 y_feed = tf.placeholder(tf.uint8,shape=[None,512,512])
 
-label_ = tf.one_hot(x_feed,7,1,0)
-out_    = tf.one_hot(y_feed,7,1,0)
+label_ = tf.one_hot(x_feed,n_classes,1,0)
+out_    = tf.one_hot(y_feed,n_classes,1,0)
 
 global_dice = util.dice(label_[:,:,:,1:],out_[:,:,:,1:])
-dice_1 = util.dice(label_[:,:,:,1],out_[:,:,:,1])
-dice_2 = util.dice(label_[:,:,:,2],out_[:,:,:,2])
-dice_3 = util.dice(label_[:,:,:,3],out_[:,:,:,3])
-dice_4 = util.dice(label_[:,:,:,4],out_[:,:,:,4])
-dice_5 = util.dice(label_[:,:,:,5],out_[:,:,:,5])
-dice_6 = util.dice(label_[:,:,:,6],out_[:,:,:,6])
 
 m = method[key](n_classes, input_height, input_width)  # 有自定义层时，不能直接加载模型
 m.load_weights('../build/checkpoints/{}'.format(modelrecordname))
@@ -105,7 +99,7 @@ for name in os.listdir(testdata_path):
     savedImg.SetSpacing(space)
     stk.WriteImage(savedImg,'{}/{}_test_label.nii.gz'.format(testresult_path,name))
     with tf.Session() as sess:
-        result = sess.run([global_dice,dice_1,dice_2,dice_3,dice_4,dice_5,dice_6],feed_dict={x_feed:label,y_feed:out})
+        result = sess.run([global_dice],feed_dict={x_feed:label,y_feed:out})
         np.save('{}/{}.npy'.format(testresult_path,name),result)
         print(result)
 

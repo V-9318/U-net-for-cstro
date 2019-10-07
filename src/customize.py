@@ -8,9 +8,10 @@ from keras.callbacks import Callback
 
 class customize(Callback):
     # 自定义的keras回调
-    def __init__(self,savedir,metrics,initial_epoch):
+    def __init__(self,savedir,metrics,initial_epoch,target):
         self.savedir = savedir
         self.metrics = metrics
+        self.target  = target
         if(initial_epoch != 0):
             self.isnew = False
         else:
@@ -20,16 +21,16 @@ class customize(Callback):
         if not os.path.exists(self.savedir) :
             os.mkdir(self.savedir)
         
-        if self.isnew:
+        moment = time.localtime(time.time())
+        self.moment = moment
+
+        if(self.isnew == True or len(os.listdir(self.savedir)) == 0):
             # isnew判断是否为从初始化状态开始训练，如果是先初始化一个hdf5文件
-            moment = time.localtime(time.time())
-            self.moment = moment
             # self.eva_dict = {}
             # self.val_eva_dict = {}
             # for metric in self.metrics:
             #     self.eva_dict[metric] = []
             #     self.val_eva_dict[metric] = []
-
             self.file = h5.File('{}/{}-{}-{}-{}-{}-{}-start-train-logs.hdf5'.format(self.savedir,
                                 moment[0],moment[1],moment[2],moment[3],moment[4],moment[5]),'w')
             self.group1 = self.file.create_group('train')
@@ -47,6 +48,10 @@ class customize(Callback):
                     moment[0],moment[1],moment[2],moment[3],moment[4],moment[5]),'r+')
         else:
             self.file = h5.File(os.path.join(self.savedir,util.get_new(self.savedir)[0]),'r+')
+            # 还是改一下模型权重的名字比较好，不然初始化epoch的时候会出现问题，这里注意就是模型权重上的epoch数是其真正从0跑到现在epoch数
+            model_file = util.get_new('../build/checkpoints/{}'.format(self.target))[0]
+            model_file_new = model_file.replace(model_file.split('-')[3],str(epoch+1))
+            os.rename('../build/checkpoints/{}/{}'.format(self.target,model_file),'../build/checkpoints/{}/{}'.format(self.target,model_file_new))
         
         self.group1 = self.file['train']
         self.group2 = self.file['valid']

@@ -112,7 +112,7 @@ if not os.path.exists('../build/Log/' + target):
 callbacks = [
     ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, mode='min',
                       min_delta=0.005, cooldown=1, verbose=1, min_lr=1e-10),
-    EarlyStopping(monitor='val_loss', min_delta=0.0001, mode='min',
+    EarlyStopping(monitor='val_global_dice', min_delta=0.001, mode='max',
                   verbose=1, patience=5),
     ModelCheckpoint(filepath='../build/checkpoints/%s/%s-%s-%s-{epoch:03d}-{val_global_dice:05f}.hdf5'%(target, key, input_height,input_width),
                     verbose=True,
@@ -120,7 +120,7 @@ callbacks = [
                     monitor='val_global_dice',
                     mode='max'),
     # 自定义回调函数，保存训练日志，并做一些处理
-    customize('../build/Log/{}'.format(target),metrics=eva_list,initial_epoch=epoch_begin)
+    customize('../build/Log/{}'.format(target),metrics=eva_list,initial_epoch=epoch_begin,target=target)
 ]
 
 

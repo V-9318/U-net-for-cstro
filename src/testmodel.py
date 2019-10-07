@@ -34,8 +34,7 @@ modelrecordname = util.get_new('../build/checkpoints/{}'.format(target))[0]
 x_feed = tf.placeholder(tf.uint8,shape=[None,512,512])
 y_feed = tf.placeholder(tf.uint8,shape=[None,512,512])
 
-label_  = tf.one_hot(x_feed,7,1,0)
-label_  = tf.one_hot(label_[:,:,:,4],n_classes,1,0)
+label_  = tf.one_hot(x_feed,n_classes,1,0)
 out_    = tf.one_hot(y_feed,n_classes,1,0)
 label_  = tf.cast(label_,dtype=tf.float32)
 out_    = tf.cast(out_,dtype=tf.float32)

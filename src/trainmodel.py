@@ -34,6 +34,22 @@ method = {
     'unet': unet.UNet,
 }
 
+# 假设为空文件吧
+if not os.path.exists('../build'):
+    os.mkdir('../build')
+
+if not os.path.exists('../build/checkpoints'):
+    os.mkdir('../build/checkpoints')
+
+if not os.path.exists('../build/checkpoints/' + target):
+    os.mkdir('../build/checkpoints/' + target)
+
+if not os.path.exists('../build/Log'):
+    os.mkdir('../build/Log')
+
+if not os.path.exists('../build/Log/' + target):
+    os.mkdir('../build/Log/' + target)
+
 # 给出加载数据时间，其实没有太多意义
 
 start = time.time()
@@ -93,21 +109,6 @@ img = ImageDataGenerator(
     data_format="channels_last")
 # 数据形式为通道最后
 
-# 假设为空文件吧
-if not os.path.exists('../build'):
-    os.mkdir('../build')
-
-if not os.path.exists('../build/checkpoints'):
-    os.mkdir('../build/checkpoints')
-
-if not os.path.exists('../build/checkpoints/' + target):
-    os.mkdir('../build/checkpoints/' + target)
-
-if not os.path.exists('../build/Log'):
-    os.mkdir('../build/Log')
-
-if not os.path.exists('../build/Log/' + target):
-    os.mkdir('../build/Log/' + target)
 
 callbacks = [
     ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, mode='min',

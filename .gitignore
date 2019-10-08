@@ -2,6 +2,7 @@
 build/data/
 build/testdata/
 build/testresult/
+build/*
 
 # cache dirs
 src/__pycache__/

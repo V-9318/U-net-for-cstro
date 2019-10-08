@@ -52,7 +52,7 @@ class customize(Callback):
             self.file = h5.File(os.path.join(self.savedir,util.get_new(self.savedir)[0]),'r+')
             # 还是改一下模型权重的名字比较好，不然初始化epoch的时候会出现问题，这里注意就是模型权重上的epoch数是其真正从0跑到现在epoch数
             model_file = util.get_new('../build/checkpoints/{}'.format(self.target))[0]
-            model_file_new = model_file.replace(model_file.split('-')[3],str(epoch+1))
+            model_file_new = model_file.replace('-'+model_file.split('-')[3]+'-','-' + str(epoch+1) + '-')
             os.rename('../build/checkpoints/{}/{}'.format(self.target,model_file),'../build/checkpoints/{}/{}'.format(self.target,model_file_new))
         
         self.group1 = self.file['train']

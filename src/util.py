@@ -17,6 +17,7 @@ def get_new(dir):
 def generator_(data_list):
     for i in data_list:
         yield i
+        
 
 def dice(y_pre,y_true,smooth=1):
     pre_num = tf.reduce_sum(y_pre)

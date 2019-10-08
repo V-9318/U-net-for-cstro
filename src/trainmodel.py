@@ -80,8 +80,9 @@ if(len(os.listdir('../build/checkpoints/{}'.format(target))) != 0):
     m.load_weights(os.path.join('../build/checkpoints/{}'.format(target),util.get_new('../build/checkpoints/{}'.format(target))[0]))
     epoch_begin = int(util.get_new('../build/checkpoints/{}'.format(target))[0].split('-')[3])
 
-
-m.compile(loss='categorical_crossentropy',
+# loss='categorical_crossentropy'
+loss = getattr(util,'cus_loss')
+m.compile(loss=loss,
           optimizer=Adam(lr=1.0e-3),
           metrics=metrics)
 
@@ -111,7 +112,7 @@ callbacks = [
     ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, mode='min',
                       min_delta=0.005, cooldown=1, verbose=1, min_lr=1e-10),
     EarlyStopping(monitor='val_global_dice', min_delta=0.001, mode='max',
-                  verbose=1, patience=5),
+                  verbose=1, patience=10),
     ModelCheckpoint(filepath='../build/checkpoints/%s/%s-%s-%s-{epoch:03d}-{val_global_dice:05f}.hdf5'%(target, key, input_height,input_width),
                     verbose=True,
                     save_best_only=True,

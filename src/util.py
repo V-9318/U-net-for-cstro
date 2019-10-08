@@ -55,6 +55,9 @@ def one_hot(nparray, depth=0, on_value=1, off_value=0):
     out[tuple(indices)] = on_value
     return out
 
+def cus_loss(y_true,y_pred):
+    return 1-dice(y_true,y_pred)
+
 
 def softmax_to_one_hot(tensor, depth):
     max_idx = np.argmax(tensor, axis=-1)

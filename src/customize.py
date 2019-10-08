@@ -46,6 +46,8 @@ class customize(Callback):
             moment = self.moment
             self.file = h5.File('{}/{}-{}-{}-{}-{}-{}-start-train-logs.hdf5'.format(self.savedir,
                     moment[0],moment[1],moment[2],moment[3],moment[4],moment[5]),'r+')
+            self.isnew = False
+
         else:
             self.file = h5.File(os.path.join(self.savedir,util.get_new(self.savedir)[0]),'r+')
             # 还是改一下模型权重的名字比较好，不然初始化epoch的时候会出现问题，这里注意就是模型权重上的epoch数是其真正从0跑到现在epoch数

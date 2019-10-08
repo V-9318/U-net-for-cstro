@@ -17,7 +17,7 @@ from keras.preprocessing.image import ImageDataGenerator
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-path = '../build/data/lung_GTV'
+path = '../build/data/Lung_GTV'
 weights_path = '../build/checkpoints'
 Log_path        = '../build/Log'
 
